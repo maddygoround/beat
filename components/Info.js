@@ -1,6 +1,8 @@
 const React = require("react");
-const { Box, Text, Spacer } = require("ink");
+const { Box, Text, Spacer, Newline } = require("ink");
+const Gradient = require("ink-gradient");
 const stringWidth = require("string-width");
+const BigText = require("ink-big-text");
 
 const PAD = " ";
 
@@ -73,22 +75,113 @@ const Info = ({
 		numberOfCharsPerSide + shiftIndex
 	);
 
+	const filterVals = ["title","album","year","artist"];
 	if (file) {
 		return (
-			<Box flexDirection="column">
-				<Box flexDirection="column">
-					<Text>Title : {file.title}</Text>
-					<Spacer />
-					<Text>Artist : {file.artist}</Text>
-					<Spacer />
-					<Text>Album : {file.album || 'N/A'}</Text>
-					<Spacer />
-					<Text>Release Year : {file.year}</Text>
-					<Spacer />
-					<Text>Genre : {file.genre.length ? file.genre.join(",") : 'N/A'}</Text>
-					<Text>Duration : {dateFormatter(file.duration)}</Text>
+			<Box flexDirection="column" width="100%">
+				<Box  marginLeft={2}>
+					<Text italic color="blueBright">Song Info</Text>
 				</Box>
-				<Box flexDirection="row">
+				<Box
+					flexDirection="column"
+					borderStyle="single"
+					paddingTop={2}
+					paddingLeft={2}
+					height={30}
+					borderColor="#7b4397"
+					alignSelf="center"
+					justifyContent="flex-start"
+					width="95%"
+				>
+					{Object.keys(file)
+						.filter((v) => filterVals.indexOf(v) >= 0)
+						.map((key) => {
+							return (
+								<Box flexDirection="row">
+									<Box width={10}>
+										<Text italic bold color="#2c3e50">
+											{key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
+										</Text>
+									</Box>
+									<Text>{file[key]}</Text>
+									<Newline />
+								</Box>
+							);
+						})}
+
+					<Box flexDirection="row">
+						<Box width={10}>
+							<Text italic bold color="#2c3e50">
+								Album:{" "}
+							</Text>
+						</Box>
+						<Text>{file.album || "N/A"}</Text>
+						<Newline />
+					</Box>
+
+					<Box flexDirection="row">
+						<Box width={10}>
+							<Text bold color="#2c3e50" italic>
+								Genre:{" "}
+							</Text>
+						</Box>
+						<Text>{file.genre.length ? file.genre.join(",") : "N/A"}</Text>
+						<Newline />
+					</Box>
+
+					<Box flexDirection="row">
+						<Box width={10}>
+							<Text bold color="#2c3e50" italic>
+								Duration:{" "}
+							</Text>
+						</Box>
+						<Text>{dateFormatter(file.duration)}</Text>
+						<Newline />
+					</Box>
+				</Box>
+				<Box
+					paddingTop={2}
+					paddingLeft={2}
+					alignSelf="center"
+					alignItems="center"
+					justifyContent="center"
+					height={20}
+				>
+					<Gradient name="rainbow">
+						<BigText text="Beat" lineHeight={2} maxLength={4}></BigText>
+					</Gradient>
+				</Box>
+				<Box
+					paddingLeft={2}
+					flexDirection="row"
+					borderStyle="single"
+					alignSelf="center"
+					height={3}
+					width="95%"
+					justifyContent="center"
+					borderColor="#eecda3"
+				>
+					<Text>00:00:00</Text>
+					<Text>{paddingString}</Text>
+					<Gradient name="rainbow">
+						<Text color={dividerColor}>{dividerSideStringLeft}</Text>
+						<Text color={titleColor}>{titleString}</Text>
+						<Text color={dividerColor}>{dividerSideStringRight}</Text>
+						<Text>{paddingString}</Text>
+					</Gradient>
+					<Text>{dateFormatter(file.duration)}</Text>
+				</Box>
+				<Box
+					paddingLeft={2}
+					flexDirection="row"
+					borderStyle="single"
+					alignSelf="center"
+					height={3}
+					// marginLeft={2}
+					width="95%"
+					justifyContent="center"
+					borderColor="#eecda3"
+				>
 					<Text>00:00:00</Text>
 					<Text>{paddingString}</Text>
 					<Text color={dividerColor}>{dividerSideStringLeft}</Text>
@@ -100,7 +193,7 @@ const Info = ({
 			</Box>
 		);
 	} else {
-		return(<Box flexDirection="row"></Box>);
+		return <Box flexDirection="row"></Box>;
 	}
 };
 

@@ -73,14 +73,19 @@ const SectionsWithStdin = ({
 	return (
 		<Box flexDirection="row" {...rest} width="100%">
 			{children.map((child, key) => {
-				const { name, width } = child.props;
+				const { name, width, marginLeft } = child.props;
 
 				return (
-					<Box key={name} width={width} flexDirection="column">
+					<Box
+						key={name}
+						width={width}
+						marginLeft={marginLeft}
+						flexDirection="column"
+					>
 						<Box width="100%">
 							<Box
 								width="100%"
-								borderColor="green"
+								borderColor="#614385"
 								// {...colors}
 								borderStyle="single"
 								flexDirection="column"

@@ -2,6 +2,7 @@ const React = require("react");
 const { Box, Text, useStdin } = require("ink");
 const { sha1 } = require("object-hash");
 const readline = require("readline");
+const Gradient = require("ink-gradient");
 /* Table */
 
 // type Scalar = string | number | boolean | null | undefined
@@ -70,13 +71,12 @@ const TableWithStdin = (props) => {
 			case "down":
 				moveToNextItem();
 				break;
-            case "p":
-                props.onSelect(activeRef.current + 1);
-                break;
+			case "p":
+				props.onSelect(activeRef.current + 1);
+				break;
 		}
 	};
 
-    
 	const moveToNextItem = () => {
 		let nextItemId = activeRef.current + 1;
 		if (nextItemId >= props.data.length) {
@@ -208,18 +208,18 @@ const TableWithStdin = (props) => {
 	});
 
 	// The line that separates rows.
-	// const separator = row({
-	// 	cell: getConfig().skeleton,
-	// 	padding: getConfig().padding,
-	// 	skeleton: {
-	// 		component: getConfig().skeleton,
-	// 		// chars
-	// 		line: "─",
-	// 		left: "├",
-	// 		right: "┤",
-	// 		cross: "┼",
-	// 	},
-	// });
+	const separator = row({
+		cell: getConfig().skeleton,
+		padding: getConfig().padding,
+		skeleton: {
+			component: getConfig().skeleton,
+			// chars
+			line: "─",
+			left: "├",
+			right: "┤",
+			cross: "┼",
+		},
+	});
 
 	// The row with the data.
 	const data = row({
@@ -260,12 +260,13 @@ const TableWithStdin = (props) => {
 	 * Render the table line by line.
 	 */
 	return (
-		<Box flexDirection="column">
+		<Box flexDirection="column" marginTop={1}>
 			{/* Header */}
 
 			{/* { header({ key: 'header', columns, data: {} })},  */}
 			{heading({ key: "heading", columns, data: headings })}
 
+			{/* {separator({ key: `separator`, columns, data: {} })} */}
 			{/* Data */}
 			{props.data.map((row, index) => {
 				// Calculate the hash of the row based on its value and position
@@ -342,7 +343,7 @@ const row = (config) => {
 	return (props) => (
 		<Box flexDirection="row">
 			{/* Left */}
-			{/* <skeleton.component>{skeleton.left}</skeleton.component> */}
+			<skeleton.component>{skeleton.left}</skeleton.component>
 			{/* Data */}
 			{intersperse(
 				(i) => {
@@ -359,7 +360,11 @@ const row = (config) => {
 					// content
 					let value = props.data[column.column];
 
-					if (column.column === "duration" && props.key !== "heading") {
+					if (
+						column.column === "duration" &&
+						props.key !== "heading" &&
+						props.key !== "separator"
+					) {
 						value = dateFormatter(value);
 					}
 
@@ -401,9 +406,9 @@ const row = (config) => {
 //  */
 const Header = (props) => {
 	return (
-		<Text bold color="blue">
-			{props.children}
-		</Text>
+			<Text bold italic color="whiteBright">
+				{props.children}
+			</Text>
 	);
 };
 
@@ -411,9 +416,15 @@ const Header = (props) => {
  * Renders a cell in the table.
  */
 const Cell = (props) => {
-	return (
-		<Text color={`${props.isActive ? "green" : ""}`}>{props.children}</Text>
-	);
+	if (props.isActive) {
+		return (
+			// <Gradient name="mind">
+				<Text  wrap="truncate-end" >{props.children}</Text>
+			// </Gradient>
+		);
+	} else {
+		return <Text dimColor wrap="truncate-end">{props.children}</Text>;
+	}
 };
 
 /**

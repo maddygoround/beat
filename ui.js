@@ -7,6 +7,7 @@ const Info = importJsx("./components/Info");
 const { Sections, Section } = importJsx("./components/Section");
 const Table = importJsx("./components/Table");
 const mm = require("music-metadata");
+const Gradient = require("ink-gradient");
 // const Player = require("player");
 const mp3Regex = /.[mM][pP]3$/;
 const App = () => {
@@ -110,7 +111,7 @@ const App = () => {
 		// </>
 		<>
 			<Sections>
-				<Section name="foo" width="40%">
+				<Section name="foo" width="39%">
 					<Info
 						dividerColor="blue"
 						titleColor="green"
@@ -121,7 +122,7 @@ const App = () => {
 						dividerChar="-"
 					/>
 				</Section>
-				<Section name="foo1" width="60%">
+				<Section name="foo1" width="60%" marginLeft={2}>
 					{filteredData.length && (
 						<Table
 							data={filteredData}
@@ -131,18 +132,32 @@ const App = () => {
 				</Section>
 			</Sections>
 
-			<Box flexDirection="row" borderStyle="single" borderColor="green" height={3}>
-				<Text> enter (select) </Text>
+			<Box
+				flexDirection="row"
+				borderStyle="bold"
+				borderColor="#7b4397"
+				height={3}
+			>
+				<Gradient name="cristal">
+					<Text> enter (select) </Text>
+				</Gradient>
 				<Spacer />
-				<Text> q (quit) </Text>
+				<Gradient name="cristal">
+					<Text> q (quit) </Text>
+				</Gradient>
 				<Spacer />
-				<Text> p (play / pause) </Text>
+				<Gradient name="cristal">
+					<Text> p (play / pause) </Text>
+				</Gradient>
 				<Spacer />
-				<Text> s (stop) </Text>
+				<Gradient name="cristal">
+					<Text> s (stop) </Text>
+				</Gradient>
 				<Spacer />
-				<Text> up / down (move) </Text>
+				<Gradient name="cristal">
+					<Text> up / down (move) </Text>
+				</Gradient>
 			</Box>
-
 		</>
 	);
 };
