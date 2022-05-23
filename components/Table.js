@@ -3,6 +3,7 @@ const { Box, Text, useStdin } = require("ink");
 const { sha1 } = require("object-hash");
 const readline = require("readline");
 const Gradient = require("ink-gradient");
+const { ClientContext } = require("../context");
 /* Table */
 
 // type Scalar = string | number | boolean | null | undefined
@@ -46,6 +47,9 @@ const TableWithStdin = (props) => {
 	/**
 	 * Merges provided configuration with defaults.
 	 */
+	const {playback} = React.useContext(ClientContext);
+
+	const [,setState] = playback;
 
 	const [active, setActive] = React.useState(1);
 	const activeRef = React.useRef(0);

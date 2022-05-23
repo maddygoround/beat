@@ -3,7 +3,7 @@ const { Box, Text, Spacer, Newline } = require("ink");
 const Gradient = require("ink-gradient");
 const stringWidth = require("string-width");
 const BigText = require("ink-big-text");
-
+const player = require("../sound/play")((opts = {}));
 const PAD = " ";
 
 // Info
@@ -24,6 +24,7 @@ const Info = ({
 	const [titleWidth, setTitleWidth] = React.useState(0);
 	const [numberOfCharsPerSide, setNumberOfCharsPerSide] = React.useState(0);
 	const [paddingString, setPaddingString] = React.useState("");
+	const audioRef = React.useRef(null);
 	// const [dividerWidth, setDividerWith] = React.useState(0);
 	// Helpers
 	const getSideDividerWidth = React.useCallback(
@@ -41,6 +42,21 @@ const Info = ({
 
 	React.useEffect(() => {
 		if (file) {
+			
+			if(audioRef.current){
+				audioRef.current.kill();
+			}
+			audioRef.current = player.play(file.path, function (err) {
+				if (err && !err.killed) throw err;
+			});
+	
+			setTimeout(()=>{
+				// audioRef.current.pause();
+				audioRef.current.pause();
+				setTimeout(()=>{
+audioRef.current.resume();
+				},5000);
+			},5000)
 			const dividerWidth = getSideDividerWidth(width, titleWidth);
 
 			setStartIndexing(true);
@@ -79,8 +95,10 @@ const Info = ({
 	if (file) {
 		return (
 			<Box flexDirection="column" width="100%">
-				<Box  marginLeft={2}>
-					<Text italic color="blueBright">Song Info</Text>
+				<Box marginLeft={2}>
+					<Text italic color="blueBright">
+						Song Info
+					</Text>
 				</Box>
 				<Box
 					flexDirection="column"
@@ -159,7 +177,7 @@ const Info = ({
 					height={3}
 					width="95%"
 					justifyContent="center"
-					borderColor="#eecda3"
+					borderColor="#004e92"
 				>
 					<Text>00:00:00</Text>
 					<Text>{paddingString}</Text>
@@ -180,7 +198,7 @@ const Info = ({
 					// marginLeft={2}
 					width="95%"
 					justifyContent="center"
-					borderColor="#eecda3"
+					borderColor="#004e92"
 				>
 					<Text>00:00:00</Text>
 					<Text>{paddingString}</Text>

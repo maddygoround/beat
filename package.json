@@ -14,6 +14,7 @@
 		"ui.js"
 	],
 	"dependencies": {
+		"audic": "^3.0.0",
 		"import-jsx": "^4.0.1",
 		"ink": "^3.2.0",
 		"ink-ascii": "0.0.4",
@@ -25,6 +26,7 @@
 		"meow": "^9.0.0",
 		"music-metadata": "^7.12.3",
 		"object-hash": "^3.0.0",
+		"play-sound": "^1.1.5",
 		"react": "^18.1.0",
 		"readline": "^1.3.0",
 		"term-img": "^6.0.0",

@@ -73,43 +73,7 @@ const App = () => {
 
 	const file = files.find((file) => file.no === currentSelectedFileNo);
 	return (
-		// <>
-		// 	<Box
-		// 		height="100%"
-		// 		borderColor="blue"
-		// 		borderStyle="bold"
-		// 		width="50%"
-		// 		alignSelf="flex-start"
-		// 	>
-		// 		<Box alignSelf="flex-start" height={30}>
-		// 			<Text>X</Text>
-		// 		</Box>
-		// 		<Box alignSelf="flex-start" borderColor="blue" borderStyle="bold">
-		// 			<Text>X</Text>
-		// 		</Box>
-		// 		<Box alignSelf="flex-start" borderColor="blue" borderStyle="bold">
-		// 			<Text>X</Text>
-		// 		</Box>
-		// 	</Box>
-		// 	<Box
-		// 		height="100%"
-		// 		borderColor="blue"
-		// 		borderStyle="bold"
-		// 		width="50%"
-		// 		alignSelf="flex-end"
-		// 	>
-		// 		<Box alignSelf="flex-start" height={30}>
-		// 			<Text>X</Text>
-		// 		</Box>
-		// 		<Box alignSelf="flex-start" borderColor="blue" borderStyle="bold">
-		// 			<Text>X</Text>
-		// 		</Box>
-		// 		<Box alignSelf="flex-start" borderColor="blue" borderStyle="bold">
-		// 			<Text>X</Text>
-		// 		</Box>
-		// 	</Box>
-		// </>
-		<>
+		<ClientProvider>
 			<Sections>
 				<Section name="foo" width="39%">
 					<Info
@@ -158,7 +122,7 @@ const App = () => {
 					<Text> up / down (move) </Text>
 				</Gradient>
 			</Box>
-		</>
+		</ClientProvider>
 	);
 };
 
