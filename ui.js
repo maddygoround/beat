@@ -3,9 +3,9 @@ const React = require("react");
 const importJsx = require("import-jsx");
 const { Text, Box, render, useFocus, Spacer } = require("ink");
 const path = require("path");
-const Divider = importJsx("./divider");
-const { Tabs, Tab } = importJsx("./tabsFunc");
-const Table = importJsx("./list");
+const Info = importJsx("./components/Info");
+const { Sections, Section } = importJsx("./components/Section");
+const Table = importJsx("./components/Table");
 const mm = require("music-metadata");
 // const Player = require("player");
 const mp3Regex = /.[mM][pP]3$/;
@@ -33,8 +33,10 @@ const App = () => {
 						no: files.length + 1,
 						title: metadata.common.title,
 						artist: metadata.common.artist,
+						album: metadata.common.album,
 						picture: metadata.common.picture,
 						year: metadata.common.year,
+						genre: metadata.common.genre || [],
 						duration: metadata.format.duration,
 					});
 				}
@@ -61,7 +63,7 @@ const App = () => {
 	const filteredData = files.map(function (v, i) {
 		var copy = {};
 		for (let key in v) {
-			if (key != "path" && key != "picture") {
+			if (key != "path" && key != "picture" ) {
 				copy[key] = v[key];
 			}
 		}
@@ -107,9 +109,9 @@ const App = () => {
 		// 	</Box>
 		// </>
 		<>
-			<Tabs>
-				<Tab name="foo" width="40%">
-					<Divider
+			<Sections>
+				<Section name="foo" width="40%">
+					<Info
 						dividerColor="blue"
 						titleColor="green"
 						title="&#9673;"
@@ -118,16 +120,16 @@ const App = () => {
 						file={file}
 						dividerChar="-"
 					/>
-				</Tab>
-				<Tab name="foo1" width="60%">
+				</Section>
+				<Section name="foo1" width="60%">
 					{filteredData.length && (
 						<Table
 							data={filteredData}
 							onSelect={(no) => setCurrentSelectedFileNo(no)}
 						/>
 					)}
-				</Tab>
-			</Tabs>
+				</Section>
+			</Sections>
 
 			<Box flexDirection="row" borderStyle="single" borderColor="green" height={3}>
 				<Text> enter (select) </Text>

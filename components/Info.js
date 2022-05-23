@@ -4,8 +4,8 @@ const stringWidth = require("string-width");
 
 const PAD = " ";
 
-// Divider
-const Divider = ({
+// Info
+const Info = ({
 	title,
 	width,
 	padding,
@@ -75,16 +75,28 @@ const Divider = ({
 
 	if (file) {
 		return (
-			<Box flexDirection="row">
-				<Text>{file.title}</Text>
-				<Text>{file.artist}</Text>
-				<Text>00:00:00</Text>
-				<Text>{paddingString}</Text>
-				<Text color={dividerColor}>{dividerSideStringLeft}</Text>
-				<Text color={titleColor}>{titleString}</Text>
-				<Text color={dividerColor}>{dividerSideStringRight}</Text>
-				<Text>{paddingString}</Text>
-				<Text>{dateFormatter(file.duration)}</Text>
+			<Box flexDirection="column">
+				<Box flexDirection="column">
+					<Text>Title : {file.title}</Text>
+					<Spacer />
+					<Text>Artist : {file.artist}</Text>
+					<Spacer />
+					<Text>Album : {file.album || 'N/A'}</Text>
+					<Spacer />
+					<Text>Release Year : {file.year}</Text>
+					<Spacer />
+					<Text>Genre : {file.genre.length ? file.genre.join(",") : 'N/A'}</Text>
+					<Text>Duration : {dateFormatter(file.duration)}</Text>
+				</Box>
+				<Box flexDirection="row">
+					<Text>00:00:00</Text>
+					<Text>{paddingString}</Text>
+					<Text color={dividerColor}>{dividerSideStringLeft}</Text>
+					<Text color={titleColor}>{titleString}</Text>
+					<Text color={dividerColor}>{dividerSideStringRight}</Text>
+					<Text>{paddingString}</Text>
+					<Text>{dateFormatter(file.duration)}</Text>
+				</Box>
 			</Box>
 		);
 	} else {
@@ -92,4 +104,4 @@ const Divider = ({
 	}
 };
 
-module.exports = Divider;
+module.exports = Info;
