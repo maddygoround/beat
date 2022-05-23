@@ -73,31 +73,32 @@ const TabsWithStdin = ({
 
 
 	return (
-		<Box flexDirection="row" {...rest} width="100%" borderStyle="classic">
+		<Box flexDirection="row" {...rest} width="100%" >
 			{children.map((child, key) => {
 				const { name ,width } = child.props;
-				let colors = {};
-				if (isFocused !== false) {
-					colors = {
-						borderColor: activeTab === key ? "green" : undefined,
-						color: activeTab === key ? "black" : undefined,
-					};
-				} else {
-					colors = {
-						borderColor: activeTab === key ? "gray" : undefined,
-						color: activeTab === key ? "black" : undefined,
-					};
-				}
+				// let colors = {};
+				// if (isFocused !== false) {
+				// 	colors = {
+				// 		borderColor: activeTab === key ? "green" : undefined,
+				// 		color: activeTab === key ? "black" : undefined,
+				// 	};
+				// } else {
+				// 	colors = {
+				// 		borderColor: activeTab === key ? "gray" : undefined,
+				// 		color: activeTab === key ? "black" : undefined,
+				// 	};
+				// }
 
 				return (
 					<Box key={name} width={width} flexDirection="column">
 						<Box width="100%">
 							<Box
 								width="100%"
-								{...colors}
+                                borderColor="green"
+								// {...colors}
 								borderStyle="single"
 								flexDirection="column"
-								height={60}
+								height={57}
 							>
 								{child}
 							</Box>

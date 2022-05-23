@@ -70,9 +70,13 @@ const TableWithStdin = (props) => {
 			case "down":
 				moveToNextItem();
 				break;
+            case "p":
+                props.onSelect(activeRef.current + 1);
+                break;
 		}
 	};
 
+    
 	const moveToNextItem = () => {
 		let nextItemId = activeRef.current + 1;
 		if (nextItemId >= props.data.length) {

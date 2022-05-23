@@ -1,7 +1,7 @@
 "use strict";
 const React = require("react");
 const importJsx = require("import-jsx");
-const { Text, Box, render, useFocus } = require("ink");
+const { Text, Box, render, useFocus, Spacer } = require("ink");
 const path = require("path");
 const Divider = importJsx("./divider");
 const { Tabs, Tab } = importJsx("./tabsFunc");
@@ -11,6 +11,7 @@ const mm = require("music-metadata");
 const mp3Regex = /.[mM][pP]3$/;
 const App = () => {
 	const [files, setFiles] = React.useState([]);
+	const [currentSelectedFileNo, setCurrentSelectedFileNo] = React.useState(1);
 	const { isFocused } = useFocus({ autoFocus: true });
 	const getAllFilesFromFolder = () => {
 		return new Promise((resolve, reject) => {
@@ -29,7 +30,7 @@ const App = () => {
 					const metadata = await mm.parseFile(root + "/" + stat.name);
 					files.push({
 						path: root + "/" + stat.name,
-						no : files.length + 1,
+						no: files.length + 1,
 						title: metadata.common.title,
 						artist: metadata.common.artist,
 						picture: metadata.common.picture,
@@ -67,6 +68,7 @@ const App = () => {
 		return copy;
 	});
 
+	const file = files.find((file) => file.no === currentSelectedFileNo);
 	return (
 		// <>
 		// 	<Box
@@ -104,29 +106,42 @@ const App = () => {
 		// 		</Box>
 		// 	</Box>
 		// </>
-		<Tabs>
-			<Tab name="foo" width="40%">
-				{files.map((file, index) => {
-					return (
-						<Box key={index}>
-							<Divider
-								dividerColor="blue"
-								titleColor="green"
-								title="&#9673;"
-								padding={2}
-								width={50}
-								file={file}
-								dividerChar="-"
-								moveInterval={(file.duration / 50) * 1000}
-							/>
-						</Box>
-					);
-				})}
-			</Tab>
-			<Tab name="foo1" width="60%">
-				{filteredData.length && <Table data={filteredData} />}
-			</Tab>
-		</Tabs>
+		<>
+			<Tabs>
+				<Tab name="foo" width="40%">
+					<Divider
+						dividerColor="blue"
+						titleColor="green"
+						title="&#9673;"
+						padding={2}
+						width={50}
+						file={file}
+						dividerChar="-"
+					/>
+				</Tab>
+				<Tab name="foo1" width="60%">
+					{filteredData.length && (
+						<Table
+							data={filteredData}
+							onSelect={(no) => setCurrentSelectedFileNo(no)}
+						/>
+					)}
+				</Tab>
+			</Tabs>
+
+			<Box flexDirection="row" borderStyle="single" borderColor="green" height={3}>
+				<Text> enter (select) </Text>
+				<Spacer />
+				<Text> q (quit) </Text>
+				<Spacer />
+				<Text> p (play / pause) </Text>
+				<Spacer />
+				<Text> s (stop) </Text>
+				<Spacer />
+				<Text> up / down (move) </Text>
+			</Box>
+
+		</>
 	);
 };
 
