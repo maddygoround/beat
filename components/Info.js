@@ -46,7 +46,7 @@ const Info = ({
 	React.useEffect(() => {
 		if (playbackState && audioRef.current) {
 			if(playbackState !== "changed") {
-			audioRef.current[playbackState]();
+				audioRef.current[playbackState]();
 			}
 		}
 	}, [playbackState]);

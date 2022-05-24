@@ -88,9 +88,11 @@ const Table = (props) => {
 		switch (ch) {
 			case "upArrow":
 				moveToPreviosItem();
+				updatePlaybackState("changed")
 				break;
 			case "downArrow":
 				moveToNextItem();
+				updatePlaybackState("changed");
 				break;
 			case "p":
 				if (selectedItem.no === activeRef.current + 1) {
@@ -101,8 +103,6 @@ const Table = (props) => {
 					}
 					break;
 				}
-				item = props.data[activeRef.current];
-				updateSelectedItem(item);
 				break;
 			case "return":
 				if (

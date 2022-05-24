@@ -7,24 +7,11 @@ const decoder = new lame.Decoder();
 var speaker;
 
 function CliPlayer(file, opts) {
-	const stream = fs.createReadStream(file);
-	var decoder = new lame.Decoder();
-	const that = this;
 	opts = opts || { autoplay: false };
+	this.file = file;
 	if (opts.autoplay) {
-		stream.pipe(decoder).on("format", function (format) {
-			speaker = new Speaker(format);
-			this.pipe(speaker);
-			that.spkr = speaker;
-			that.running = true;
-			that.spkr.on("error", () => {});
-			that.spkr.on("warn", () => {});
-		});
+		this.play();
 	}
-
-	this.stream = stream;
-	this.decoder = decoder;
-
 	return this;
 }
 
@@ -32,16 +19,20 @@ CliPlayer.prototype.paused = false;
 CliPlayer.prototype.running = false;
 
 CliPlayer.prototype.play = function () {
-	console.log("Play");
 	if (!this.autoplay) {
+		console.log(this.file);
+		const stream = fs.createReadStream(this.file);
+		const decoder = new lame.Decoder();
 		const that = this;
-		this.stream.pipe(this.decoder).on("format", function (format) {
+		stream.pipe(decoder).on("format", function (format) {
 			speaker = new Speaker(format);
 			this.pipe(speaker);
 			that.spkr = speaker;
 			that.spkr.on("error", () => {});
 			that.spkr.on("warn", () => {});
 		});
+		this.stream = stream;
+		this.decoder = decoder;
 		this.running = true;
 		// this.emit("paused");
 	}
