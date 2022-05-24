@@ -1,9 +1,10 @@
 const React = require("react");
-const { Box, Text, useStdin } = require("ink");
+const { Box, Text, useInput } = require("ink");
+const importJsx = require("import-jsx");
 const { sha1 } = require("object-hash");
 const readline = require("readline");
 const Gradient = require("ink-gradient");
-const { ClientContext } = require("../context");
+const { useClientContext } = importJsx("../context");
 /* Table */
 
 // type Scalar = string | number | boolean | null | undefined
@@ -41,42 +42,83 @@ const { ClientContext } = require("../context");
 
 /* Table */
 
-const TableWithStdin = (props) => {
+const Table = (props) => {
 	/* Config */
 
 	/**
 	 * Merges provided configuration with defaults.
 	 */
-	const {playback} = React.useContext(ClientContext);
-
-	const [,setState] = playback;
+	const {
+		playbackState,
+		selectedItem,
+		updatePlaybackState,
+		updateSelectedItem,
+	} = useClientContext();
 
 	const [active, setActive] = React.useState(1);
 	const activeRef = React.useRef(0);
 
-	React.useEffect(() => {
-		const { isRawModeSupported, stdin, setRawMode } = props;
-		if (isRawModeSupported && stdin) {
-			// use ink / node `setRawMode` to read key-by-key
-			if (setRawMode) {
-				setRawMode(true);
+	const filteredData = props.data.map(function (v, i) {
+		var copy = {};
+		for (let key in v) {
+			if (key != "path" && key != "picture") {
+				copy[key] = v[key];
 			}
-
-			readline.emitKeypressEvents(stdin);
-			stdin.on("keypress", handleKeyPress);
 		}
-	}, []);
+		return copy;
+	});
+
+	useInput((input, key) => {
+		let presedKey = Object.keys(key).find((k) => key[k]);
+		if (!presedKey) {
+			presedKey = input;
+		}
+		handleKeyPress(presedKey);
+	});
+
+	React.useEffect(() => {
+		if (props.data) {
+			updateSelectedItem(props.data[0]);
+			updatePlaybackState("changed");
+		}
+	}, [props.data]);
 
 	const handleKeyPress = (ch, key) => {
-		switch (key.name) {
-			case "up":
+		let item;
+		switch (ch) {
+			case "upArrow":
 				moveToPreviosItem();
 				break;
-			case "down":
+			case "downArrow":
 				moveToNextItem();
 				break;
 			case "p":
-				props.onSelect(activeRef.current + 1);
+				if (selectedItem.no === activeRef.current + 1) {
+					if (playbackState === "play" || playbackState === "resume") {
+						updatePlaybackState("pause");
+					} else {
+						updatePlaybackState("resume");
+					}
+					break;
+				}
+				item = props.data[activeRef.current];
+				updateSelectedItem(item);
+				break;
+			case "return":
+				if (
+					selectedItem.no !== activeRef.current + 1 ||
+					playbackState === "changed"
+				) {
+					item = props.data[activeRef.current];
+					updateSelectedItem(item);
+					updatePlaybackState("play");
+				} else {
+					if (playbackState === "play" || playbackState === "resume") {
+						updatePlaybackState("pause");
+					} else {
+						updatePlaybackState("resume");
+					}
+				}
 				break;
 		}
 	};
@@ -110,7 +152,7 @@ const TableWithStdin = (props) => {
 
 	const getConfig = () => {
 		return {
-			data: props.data,
+			data: filteredData,
 			columns: props.columns || getDataKeys(),
 			padding: props.padding || 3,
 			header: props.header || Header,
@@ -126,7 +168,7 @@ const TableWithStdin = (props) => {
 		let keys = new Set();
 
 		// Collect all the keys.
-		for (const data of props.data) {
+		for (const data of filteredData) {
 			for (const key in data) {
 				keys.add(key);
 			}
@@ -147,7 +189,7 @@ const TableWithStdin = (props) => {
 		const widths = columns.map((key) => {
 			const header = String(key).length;
 			/* Get the width of each cell in the column */
-			const data = props.data.map((data) => {
+			const data = filteredData.map((data) => {
 				const value = data[key];
 
 				if (value == undefined || value == null) return 0;
@@ -272,7 +314,7 @@ const TableWithStdin = (props) => {
 
 			{/* {separator({ key: `separator`, columns, data: {} })} */}
 			{/* Data */}
-			{props.data.map((row, index) => {
+			{filteredData.map((row, index) => {
 				// Calculate the hash of the row based on its value and position
 				const key = `row-${sha1(row)}-${index}`;
 				const isActive = active === row.no;
@@ -410,9 +452,9 @@ const row = (config) => {
 //  */
 const Header = (props) => {
 	return (
-			<Text bold italic color="whiteBright">
-				{props.children}
-			</Text>
+		<Text bold italic color="whiteBright">
+			{props.children}
+		</Text>
 	);
 };
 
@@ -423,11 +465,15 @@ const Cell = (props) => {
 	if (props.isActive) {
 		return (
 			// <Gradient name="mind">
-				<Text  wrap="truncate-end" >{props.children}</Text>
+			<Text wrap="truncate-end">{props.children}</Text>
 			// </Gradient>
 		);
 	} else {
-		return <Text dimColor wrap="truncate-end">{props.children}</Text>;
+		return (
+			<Text dimColor wrap="truncate-end">
+				{props.children}
+			</Text>
+		);
 	}
 };
 
@@ -453,19 +499,6 @@ const intersperse = (intersperser, elements) => {
 	}, []);
 
 	return interspersed;
-};
-
-const Table = (props) => {
-	const { isRawModeSupported, stdin, setRawMode } = useStdin();
-
-	return (
-		<TableWithStdin
-			isRawModeSupported={isRawModeSupported}
-			stdin={stdin}
-			setRawMode={setRawMode}
-			{...props}
-		/>
-	);
 };
 
 module.exports = Table;

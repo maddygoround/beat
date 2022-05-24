@@ -1,22 +1,22 @@
 const React = require("react");
+const constate = require("constate").default;
 
-const ClientContext = React.createContext([{}, () => {}]);
+// 1️⃣ Create a custom hook as usual
+function useContext() {
+	const [playbackState, setPlaybackState] = React.useState();
+	const [selectedItem, setSelectedItem] = React.useState();
+	const updatePlaybackState = (value) => setPlaybackState(value);
 
-const ClientProvider = (props) => {
+	const updateSelectedItem = (item) => setSelectedItem(item);
 
-	const [state, setState] = useState();
-    const [selectedItem, setSelectedItem] = useState();
+	return {
+		playbackState,
+		selectedItem,
+		updatePlaybackState,
+		updateSelectedItem,
+	};
+}
 
-	return (
-		<ClientContext.Provider
-			value={{
-				playback: [state, setState],
-				item: [selectedItem, setSelectedItem],
-			}}
-		>
-			{props.children}
-		</ClientContext.Provider>
-	);
-};
+const [ClientProvider, useClientContext] = constate(useContext);
 
-export { ClientContext, ClientProvider };
+module.exports = { useClientContext, ClientProvider };

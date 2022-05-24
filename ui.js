@@ -8,6 +8,7 @@ const { Sections, Section } = importJsx("./components/Section");
 const Table = importJsx("./components/Table");
 const mm = require("music-metadata");
 const Gradient = require("ink-gradient");
+const { ClientProvider } = importJsx("./context");
 // const Player = require("player");
 const mp3Regex = /.[mM][pP]3$/;
 const App = () => {
@@ -61,38 +62,23 @@ const App = () => {
 		})();
 	}, []);
 
-	const filteredData = files.map(function (v, i) {
-		var copy = {};
-		for (let key in v) {
-			if (key != "path" && key != "picture" ) {
-				copy[key] = v[key];
-			}
-		}
-		return copy;
-	});
 
-	const file = files.find((file) => file.no === currentSelectedFileNo);
+	// const file = files.find((file) => file.no === currentSelectedFileNo);
 	return (
 		<ClientProvider>
 			<Sections>
-				<Section name="foo" width="39%">
+				<Section name="info" width="39%">
 					<Info
 						dividerColor="blue"
 						titleColor="green"
 						title="&#9673;"
 						padding={2}
 						width={50}
-						file={file}
 						dividerChar="-"
 					/>
 				</Section>
-				<Section name="foo1" width="60%" marginLeft={2}>
-					{filteredData.length && (
-						<Table
-							data={filteredData}
-							onSelect={(no) => setCurrentSelectedFileNo(no)}
-						/>
-					)}
+				<Section name="table" width="60%" marginLeft={2}>
+					{files.length && <Table data={files} />}
 				</Section>
 			</Sections>
 

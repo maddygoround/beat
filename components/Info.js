@@ -1,9 +1,11 @@
 const React = require("react");
 const { Box, Text, Spacer, Newline } = require("ink");
+const importJsx = require("import-jsx");
 const Gradient = require("ink-gradient");
 const stringWidth = require("string-width");
 const BigText = require("ink-big-text");
-const player = require("../sound/play")((opts = {}));
+const { useClientContext } = importJsx("../context");
+const player = require("../sound/cliplayer");
 const PAD = " ";
 
 // Info
@@ -24,6 +26,7 @@ const Info = ({
 	const [titleWidth, setTitleWidth] = React.useState(0);
 	const [numberOfCharsPerSide, setNumberOfCharsPerSide] = React.useState(0);
 	const [paddingString, setPaddingString] = React.useState("");
+	const { selectedItem, playbackState } = useClientContext();
 	const audioRef = React.useRef(null);
 	// const [dividerWidth, setDividerWith] = React.useState(0);
 	// Helpers
@@ -41,22 +44,22 @@ const Info = ({
 	}, []);
 
 	React.useEffect(() => {
-		if (file) {
-			
-			if(audioRef.current){
-				audioRef.current.kill();
+		if (playbackState && audioRef.current) {
+			if(playbackState !== "changed") {
+			audioRef.current[playbackState]();
 			}
-			audioRef.current = player.play(file.path, function (err) {
-				if (err && !err.killed) throw err;
-			});
-	
-			setTimeout(()=>{
-				// audioRef.current.pause();
-				audioRef.current.pause();
-				setTimeout(()=>{
-audioRef.current.resume();
-				},5000);
-			},5000)
+		}
+	}, [playbackState]);
+
+	React.useEffect(() => {
+		if (selectedItem) {
+
+			if (audioRef.current) {
+				audioRef.current.stop();
+			}
+
+			audioRef.current = new player(selectedItem.path);
+
 			const dividerWidth = getSideDividerWidth(width, titleWidth);
 
 			setStartIndexing(true);
@@ -73,7 +76,7 @@ audioRef.current.resume();
 			);
 			setPaddingString(PAD.repeat(padding));
 		}
-	}, [file]);
+	}, [selectedItem]);
 
 	React.useEffect(() => {
 		if (startIndexing && shiftIndex > -25 && moveInterval) {
@@ -92,7 +95,7 @@ audioRef.current.resume();
 	);
 
 	const filterVals = ["title","album","year","artist"];
-	if (file) {
+	if (selectedItem) {
 		return (
 			<Box flexDirection="column" width="100%">
 				<Box marginLeft={2}>
@@ -111,17 +114,17 @@ audioRef.current.resume();
 					justifyContent="flex-start"
 					width="95%"
 				>
-					{Object.keys(file)
+					{Object.keys(selectedItem)
 						.filter((v) => filterVals.indexOf(v) >= 0)
 						.map((key) => {
 							return (
-								<Box flexDirection="row">
+								<Box flexDirection="row" key={key}>
 									<Box width={10}>
 										<Text italic bold color="#2c3e50">
 											{key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
 										</Text>
 									</Box>
-									<Text>{file[key]}</Text>
+									<Text>{selectedItem[key]}</Text>
 									<Newline />
 								</Box>
 							);
@@ -133,7 +136,7 @@ audioRef.current.resume();
 								Album:{" "}
 							</Text>
 						</Box>
-						<Text>{file.album || "N/A"}</Text>
+						<Text>{selectedItem.album || "N/A"}</Text>
 						<Newline />
 					</Box>
 
@@ -143,7 +146,9 @@ audioRef.current.resume();
 								Genre:{" "}
 							</Text>
 						</Box>
-						<Text>{file.genre.length ? file.genre.join(",") : "N/A"}</Text>
+						<Text>
+							{selectedItem.genre.length ? selectedItem.genre.join(",") : "N/A"}
+						</Text>
 						<Newline />
 					</Box>
 
@@ -153,7 +158,7 @@ audioRef.current.resume();
 								Duration:{" "}
 							</Text>
 						</Box>
-						<Text>{dateFormatter(file.duration)}</Text>
+						<Text>{dateFormatter(selectedItem.duration)}</Text>
 						<Newline />
 					</Box>
 				</Box>
@@ -187,7 +192,7 @@ audioRef.current.resume();
 						<Text color={dividerColor}>{dividerSideStringRight}</Text>
 						<Text>{paddingString}</Text>
 					</Gradient>
-					<Text>{dateFormatter(file.duration)}</Text>
+					<Text>{dateFormatter(selectedItem.duration)}</Text>
 				</Box>
 				<Box
 					paddingLeft={2}
@@ -206,7 +211,7 @@ audioRef.current.resume();
 					<Text color={titleColor}>{titleString}</Text>
 					<Text color={dividerColor}>{dividerSideStringRight}</Text>
 					<Text>{paddingString}</Text>
-					<Text>{dateFormatter(file.duration)}</Text>
+					<Text>{dateFormatter(selectedItem.duration)}</Text>
 				</Box>
 			</Box>
 		);

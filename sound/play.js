@@ -52,7 +52,7 @@ function Play(opts) {
 
 		this.process.on("close", function (err) {
 			// next(err && !err.killed ? err : null);
-			self.emit("complete");
+			// self.emit("complete");
 		});
 
 		var self = this;
@@ -60,7 +60,7 @@ function Play(opts) {
 		this.process.on("exit", function (code, sig) {
 			self.stopped = true;
 			if (code !== null && sig === null) {
-				self.emit("complete");
+				// self.emit("complete");
 			}
 		});
 
@@ -70,8 +70,8 @@ function Play(opts) {
 	this.pause = () => {
 		if (this.process) {
 			if (this.stopped) return true;
-			this.process.kill("SIGSTOP");
-			this.emit("pause");
+			this.process.kill("SIGTSTP");
+			// this.emit("pause");
 		}
 	};
 
@@ -79,7 +79,7 @@ function Play(opts) {
 		if (this.process) {
 			if (this.stopped) return this.play();
 			this.process.kill("SIGCONT");
-			this.emit("resume");
+			// this.emit("resume");
 		}
 	};
 
@@ -87,7 +87,7 @@ function Play(opts) {
 		if(this.process){
 			this.stopped = true;
 			this.process.kill("SIGTERM");
-			this.emit("stop");
+			// this.emit("stop");
 		}
 	}
 
