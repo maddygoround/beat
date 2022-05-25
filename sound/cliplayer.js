@@ -47,9 +47,9 @@ CliPlayer.prototype.pause = function () {
 		var that = this;
 		setTimeout(function () {
 			that.spkr.close();
-		}, 300);
-		this.paused = true;
-		this.emit("pause");
+			that.paused = true;
+			that.emit("pause");
+		}, 500);
 	}
 };
 
@@ -61,9 +61,9 @@ CliPlayer.prototype.resume = function () {
 			that.spkr.on("error", () => {});
 			that.spkr.on("warn", () => {});
 			that.decoder.pipe(that.spkr);
-		}, 300);
-		this.paused = false;
-		this.emit("resume");
+			that.paused = false;
+			that.emit("resume");
+		}, 500);
 	}
 };
 
@@ -81,7 +81,7 @@ CliPlayer.prototype.stop = function () {
 			that.decoder = null;
 			that.emit("stop");
 		}
-	}, 300);
+	}, 500);
 };
 
 module.exports = CliPlayer;

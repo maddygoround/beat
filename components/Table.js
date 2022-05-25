@@ -5,42 +5,6 @@ const { sha1 } = require("object-hash");
 const readline = require("readline");
 const Gradient = require("ink-gradient");
 const { useClientContext } = importJsx("../context");
-/* Table */
-
-// type Scalar = string | number | boolean | null | undefined
-
-// type ScalarDict = {
-//   [key: string]: Scalar
-// }
-
-// export type TableProps<T extends ScalarDict> = {
-//   /**
-//    * List of values (rows).
-//    */
-//   data: T[]
-//   /**
-//    * Columns that we should display in the table.
-//    */
-//   columns: (keyof T)[]
-//   /**
-//    * Cell padding.
-//    */
-//   padding: number
-//   /**
-//    * Header component.
-//    */
-//   header: (props: React.PropsWithChildren<{}>) => JSX.Element
-//   /**
-//    * Component used to render a cell in the table.
-//    */
-//   cell: (props: React.PropsWithChildren<{}>) => JSX.Element
-//   /**
-//    * Component used to render the skeleton of the table.
-//    */
-//   skeleton: (props: React.PropsWithChildren<{}>) => JSX.Element
-// }
-
-/* Table */
 
 const Table = (props) => {
 	/* Config */
@@ -92,25 +56,20 @@ const Table = (props) => {
 				break;
 			case "q":
 				console.log("quit");
-					process.exit(1);
-					break;
+				process.exit(1);
+				break;
 			case "p":
-				if (selectedItem.no === activeRef.current + 1) {
-					switch(playbackState){
-						case "playing" :
-							updatePlaybackState("pause");
-							break;
-						case "paused":
-							updatePlaybackState("resume");
-							break;
-					}
-					break;
-				} 
+				switch (playbackState) {
+					case "playing":
+						updatePlaybackState("pause");
+						break;
+					case "paused":
+						updatePlaybackState("resume");
+						break;
+				}
 				break;
 			case "return":
-				if (
-					selectedItem.no !== activeRef.current + 1 || !playbackState
-				) {
+				if (selectedItem.no !== activeRef.current + 1 || !playbackState) {
 					item = props.data[activeRef.current];
 					updateSelectedItem(item);
 					updatePlaybackState("play");
@@ -324,11 +283,18 @@ const Table = (props) => {
 				// Calculate the hash of the row based on its value and position
 				const key = `row-${sha1(row)}-${index}`;
 				const isActive = active === row.no;
+				const isPlaying = selectedItem?.no === row.no;
 				// Construct a row.
 				return (
 					<Box flexDirection="column" key={key}>
 						{/* {separator({ key: `separator-${key}`, columns, data: {} })} */}
-						{data({ key: `data-${key}`, columns, data: row, isActive })}
+						{data({
+							key: `data-${key}`,
+							columns,
+							data: row,
+							isActive,
+							isPlaying,
+						})}
 					</Box>
 				);
 			})}
@@ -337,47 +303,6 @@ const Table = (props) => {
 		</Box>
 	);
 };
-
-/* Helper components */
-
-// type RowConfig = {
-//   /**
-//    * Component used to render cells.
-//    */
-//   cell: (props: React.PropsWithChildren<{}>) => JSX.Element
-//   /**
-//    * Tells the padding of each cell.
-//    */
-//   padding: number
-//   /**
-//    * Component used to render skeleton in the row.
-//    */
-//   skeleton: {
-//     component: (props: React.PropsWithChildren<{}>) => JSX.Element
-//     /**
-//      * Characters used in skeleton.
-//      *    |             |
-//      * (left)-(line)-(cross)-(line)-(right)
-//      *    |             |
-//      */
-//     left: string
-//     right: string
-//     cross: string
-//     line: string
-//   }
-// }
-
-// type RowProps<T extends ScalarDict> = {
-//   key: string
-//   data: Partial<T>
-//   columns: Column<T>[]
-// }
-
-// type Column<T> = {
-//   key: string
-//   column: keyof T
-//   width: number
-// }
 
 /**
  * Constructs a Row element from the configuration.
@@ -440,7 +365,7 @@ const row = (config) => {
 
 						return (
 							/* prettier-ignore */
-							<config.cell  key={key} isActive={props.isActive}>
+							<config.cell  key={key} isActive={props.isActive} isPlaying={props.isPlaying} >
                                 {`${skeleton.line.repeat(ml)}${String(value)}${skeleton.line.repeat(mr)}`}
                             </config.cell>
 						);
@@ -470,13 +395,17 @@ const Header = (props) => {
 const Cell = (props) => {
 	if (props.isActive) {
 		return (
-			// <Gradient name="mind">
-			<Text wrap="truncate-end">{props.children}</Text>
-			// </Gradient>
+			<Text wrap="truncate-end" color={props.isPlaying && "yellowBright"}>
+				{props.children}
+			</Text>
 		);
 	} else {
 		return (
-			<Text dimColor wrap="truncate-end">
+			<Text
+				dimColor={props.isPlaying ? false : true}
+				wrap="truncate-end"
+				color={props.isPlaying && "yellowBright"}
+			>
 				{props.children}
 			</Text>
 		);
