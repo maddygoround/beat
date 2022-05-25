@@ -1,14 +1,13 @@
 /**
- * The <Tabs> component
+ * The <Sections> component
  */
 const React = require("react");
-const { useStdin, Box, Text } = require("ink");
+const {  Box, Text } = require("ink");
 
 /**
- * A <Tab> component
+ * A <Section> component
  */
-// eslint-disable-next-line react/prop-types
-const Section = ({ children, width }) => {
+const Section = ({ children }) => {
 	if (typeof children !== "object") {
 		return <Text>{children}</Text>;
 	} else {
@@ -16,60 +15,11 @@ const Section = ({ children, width }) => {
 	}
 };
 
-const SectionsWithStdin = ({
-	isRawModeSupported,
-	stdin,
-	setRawMode,
+const Sections = ({
 	children,
 	isFocused,
 	...rest
 }) => {
-	const [activeTab, setActiveTab] = React.useState(0);
-	const activeRef = React.useRef(null);
-
-	// console.log(activeTab);
-	// React.useEffect(() => {
-	// 	if (isRawModeSupported && stdin) {
-	// 		// use ink / node `setRawMode` to read key-by-key
-	// 		if (setRawMode) {
-	// 			setRawMode(true);
-	// 		}
-
-	// 		readline.emitKeypressEvents(stdin);
-	// 		stdin.on("keypress", handleKeyPress);
-	// 	}
-	// }, []);
-
-	// const handleKeyPress = (ch, key) => {
-	// 	switch (key.name) {
-	// 		case "tab":
-	// 			if (key.shift === true) {
-	// 				moveToPreviousTab();
-	// 			} else {
-	// 				moveToNextTab();
-	// 			}
-	// 			break;
-	// 	}
-	// };
-
-	// const moveToNextTab = () => {
-	// 	let nextTabId = activeRef.current + 1;
-	// 	if (nextTabId >= children.length) {
-	// 		nextTabId = 0;
-	// 	}
-	// 	handleTabChange(nextTabId);
-	// };
-
-	// const handleTabChange = (tabId) => {
-	// 	const tab = children[tabId];
-
-	// 	if (!tab) {
-	// 		return;
-	// 	}
-	//     activeRef.current = tabId;
-	//     setActiveTab(activeRef.current);
-	// };
-
 	return (
 		<Box flexDirection="row" {...rest} width="100%">
 			{children.map((child, key) => {
@@ -86,7 +36,6 @@ const SectionsWithStdin = ({
 							<Box
 								width="100%"
 								borderColor="#614385"
-								// {...colors}
 								borderStyle="single"
 								flexDirection="column"
 								height={57}
@@ -101,17 +50,6 @@ const SectionsWithStdin = ({
 	);
 };
 
-const Sections = (props) => {
-	const { isRawModeSupported, stdin, setRawMode } = useStdin();
 
-	return (
-		<SectionsWithStdin
-			isRawModeSupported={isRawModeSupported}
-			stdin={stdin}
-			setRawMode={setRawMode}
-			{...props}
-		/>
-	);
-};
 
 module.exports = { Sections, Section };

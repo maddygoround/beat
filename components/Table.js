@@ -2,8 +2,6 @@ const React = require("react");
 const { Box, Text, useInput } = require("ink");
 const importJsx = require("import-jsx");
 const { sha1 } = require("object-hash");
-const readline = require("readline");
-const Gradient = require("ink-gradient");
 const { useClientContext } = importJsx("../context");
 
 const Table = (props) => {
@@ -20,7 +18,6 @@ const Table = (props) => {
 	} = useClientContext();
 	const [active, setActive] = React.useState(1);
 	const activeRef = React.useRef(0);
-
 	const filteredData = props.data.map(function (v, i) {
 		var copy = {};
 		for (let key in v) {
@@ -54,6 +51,9 @@ const Table = (props) => {
 			case "downArrow":
 				moveToNextItem();
 				break;
+			case "s":
+				updatePlaybackState("stop");
+				break;
 			case "q":
 				console.log("quit");
 				process.exit(1);
@@ -81,7 +81,10 @@ const Table = (props) => {
 						case "paused":
 							updatePlaybackState("resume");
 							break;
-					}
+						case "stopped":
+							updatePlaybackState("play");
+							break;
+					}	
 				}
 				break;
 		}
@@ -188,22 +191,6 @@ const Table = (props) => {
 		return headings;
 	};
 
-	/* Rendering utilities */
-
-	// The top most line in the table.
-	// const header = row({
-	// 	cell: getConfig().skeleton,
-	// 	padding: getConfig().padding,
-	// 	skeleton: {
-	// 		component: getConfig().skeleton,
-	// 		// chars
-	// 		line: "─",
-	// 		left: "┌",
-	// 		right: "┐",
-	// 		cross: "┬",
-	// 	},
-	// });
-
 	// The line with column names.
 	const heading = row({
 		cell: getConfig().header,
@@ -286,16 +273,18 @@ const Table = (props) => {
 				const isPlaying = selectedItem?.no === row.no;
 				// Construct a row.
 				return (
-					<Box flexDirection="column" key={key}>
-						{/* {separator({ key: `separator-${key}`, columns, data: {} })} */}
-						{data({
-							key: `data-${key}`,
-							columns,
-							data: row,
-							isActive,
-							isPlaying,
-						})}
-					</Box>
+			
+						<Box flexDirection="column" key={key}>
+							{/* {separator({ key: `separator-${key}`, columns, data: {} })} */}
+							{data({
+								key: `data-${key}`,
+								columns,
+								data: row,
+								isActive,
+								isPlaying,
+							})}
+						</Box>
+					
 				);
 			})}
 			{/* Footer */}

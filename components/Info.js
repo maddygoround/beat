@@ -59,8 +59,10 @@ const Info = ({
 				audioRef.current.stop();
 				audioRef.current.off("play",()=>{});
 				audioRef.current.off("stop", () => {});
+				audioRef.current.off("pause", () => {});
+				audioRef.current.off("resume", () => {});
 			}
-			
+
 			audioRef.current = new player(selectedItem.path);
 
 			audioRef.current.on("play", () => {
