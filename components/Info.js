@@ -20,13 +20,14 @@ const Info = ({
 	moveInterval,
 	file,
 }) => {
+	const playbackStates = ["playing", "paused","resumed","stopped"];
 	const [shiftIndex, setShiftIndex] = React.useState(0);
 	const [startIndexing, setStartIndexing] = React.useState(false);
 	const [titleString, setTitleString] = React.useState("");
 	const [titleWidth, setTitleWidth] = React.useState(0);
 	const [numberOfCharsPerSide, setNumberOfCharsPerSide] = React.useState(0);
 	const [paddingString, setPaddingString] = React.useState("");
-	const { selectedItem, playbackState } = useClientContext();
+	const { selectedItem, playbackState , updatePlaybackState } = useClientContext();
 	const audioRef = React.useRef(null);
 	// const [dividerWidth, setDividerWith] = React.useState(0);
 	// Helpers
@@ -45,20 +46,38 @@ const Info = ({
 
 	React.useEffect(() => {
 		if (playbackState && audioRef.current) {
-			if(playbackState !== "changed") {
+			const doNotPerformAction = playbackStates.find((state)=> state === playbackState);
+ 			if (!doNotPerformAction) {
 				audioRef.current[playbackState]();
 			}
 		}
-	}, [playbackState]);
+	}, [playbackState, audioRef.current]);
 
 	React.useEffect(() => {
 		if (selectedItem) {
-
 			if (audioRef.current) {
 				audioRef.current.stop();
+				audioRef.current.off("play",()=>{});
+				audioRef.current.off("stop", () => {});
 			}
-
+			
 			audioRef.current = new player(selectedItem.path);
+
+			audioRef.current.on("play", () => {
+				updatePlaybackState("playing");
+			});
+
+			audioRef.current.on("stop", () => {
+				updatePlaybackState("stopped");
+			});
+
+			audioRef.current.on("pause", () => {
+				updatePlaybackState("paused");
+			});
+
+			audioRef.current.on("resume", () => {
+				updatePlaybackState("playing");
+			});
 
 			const dividerWidth = getSideDividerWidth(width, titleWidth);
 
@@ -94,7 +113,7 @@ const Info = ({
 		numberOfCharsPerSide + shiftIndex
 	);
 
-	const filterVals = ["title","album","year","artist"];
+	const filterVals = ["title", "album", "year", "artist"];
 	if (selectedItem) {
 		return (
 			<Box flexDirection="column" width="100%">

@@ -54,7 +54,6 @@ const Table = (props) => {
 		updatePlaybackState,
 		updateSelectedItem,
 	} = useClientContext();
-
 	const [active, setActive] = React.useState(1);
 	const activeRef = React.useRef(0);
 
@@ -79,7 +78,6 @@ const Table = (props) => {
 	React.useEffect(() => {
 		if (props.data) {
 			updateSelectedItem(props.data[0]);
-			updatePlaybackState("changed");
 		}
 	}, [props.data]);
 
@@ -88,35 +86,42 @@ const Table = (props) => {
 		switch (ch) {
 			case "upArrow":
 				moveToPreviosItem();
-				updatePlaybackState("changed")
 				break;
 			case "downArrow":
 				moveToNextItem();
-				updatePlaybackState("changed");
 				break;
+			case "q":
+				console.log("quit");
+					process.exit(1);
+					break;
 			case "p":
 				if (selectedItem.no === activeRef.current + 1) {
-					if (playbackState === "play" || playbackState === "resume") {
-						updatePlaybackState("pause");
-					} else {
-						updatePlaybackState("resume");
+					switch(playbackState){
+						case "playing" :
+							updatePlaybackState("pause");
+							break;
+						case "paused":
+							updatePlaybackState("resume");
+							break;
 					}
 					break;
-				}
+				} 
 				break;
 			case "return":
 				if (
-					selectedItem.no !== activeRef.current + 1 ||
-					playbackState === "changed"
+					selectedItem.no !== activeRef.current + 1 || !playbackState
 				) {
 					item = props.data[activeRef.current];
 					updateSelectedItem(item);
 					updatePlaybackState("play");
 				} else {
-					if (playbackState === "play" || playbackState === "resume") {
-						updatePlaybackState("pause");
-					} else {
-						updatePlaybackState("resume");
+					switch (playbackState) {
+						case "playing":
+							updatePlaybackState("pause");
+							break;
+						case "paused":
+							updatePlaybackState("resume");
+							break;
 					}
 				}
 				break;
@@ -147,6 +152,7 @@ const Table = (props) => {
 		}
 
 		activeRef.current = itemId;
+
 		setActive(item.no);
 	};
 

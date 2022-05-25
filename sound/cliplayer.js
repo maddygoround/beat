@@ -6,13 +6,15 @@ const Speaker = require("speaker");
 const decoder = new lame.Decoder();
 var speaker;
 
-function CliPlayer(file, opts) {
-	opts = opts || { autoplay: false };
-	this.file = file;
-	if (opts.autoplay) {
-		this.play();
+class CliPlayer extends EventEmitter {
+	constructor(file, opts) {
+		super();
+		this.opts = opts || { autoplay: false };
+		this.file = file;
+		if (this.opts.autoplay) {
+			this.play();
+		}
 	}
-	return this;
 }
 
 CliPlayer.prototype.paused = false;
@@ -20,21 +22,23 @@ CliPlayer.prototype.running = false;
 
 CliPlayer.prototype.play = function () {
 	if (!this.autoplay) {
-		console.log(this.file);
-		const stream = fs.createReadStream(this.file);
-		const decoder = new lame.Decoder();
-		const that = this;
-		stream.pipe(decoder).on("format", function (format) {
-			speaker = new Speaker(format);
-			this.pipe(speaker);
-			that.spkr = speaker;
-			that.spkr.on("error", () => {});
-			that.spkr.on("warn", () => {});
-		});
-		this.stream = stream;
-		this.decoder = decoder;
-		this.running = true;
-		// this.emit("paused");
+		setTimeout(() => {
+			// console.log(this.file);
+			const stream = fs.createReadStream(this.file);
+			const decoder = new lame.Decoder();
+			const that = this;
+			stream.pipe(decoder).on("format", function (format) {
+				speaker = new Speaker(format);
+				this.pipe(speaker);
+				that.spkr = speaker;
+				that.spkr.on("error", () => {});
+				that.spkr.on("warn", () => {});
+			});
+			this.stream = stream;
+			this.decoder = decoder;
+			this.running = true;
+			this.emit("play");
+		}, 500);
 	}
 };
 
@@ -45,7 +49,7 @@ CliPlayer.prototype.pause = function () {
 			that.spkr.close();
 		}, 300);
 		this.paused = true;
-		// this.emit("paused");
+		this.emit("pause");
 	}
 };
 
@@ -59,7 +63,7 @@ CliPlayer.prototype.resume = function () {
 			that.decoder.pipe(that.spkr);
 		}, 300);
 		this.paused = false;
-		// this.emit("resumed");
+		this.emit("resume");
 	}
 };
 
@@ -75,6 +79,7 @@ CliPlayer.prototype.stop = function () {
 			that.stream = null;
 			that.spkr = null;
 			that.decoder = null;
+			that.emit("stop");
 		}
 	}, 300);
 };
