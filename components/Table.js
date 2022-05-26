@@ -73,7 +73,6 @@ const Table = (props) => {
 					item = props.data[activeRef.current];
 					updateSelectedItem(item);
 				} else {
-					console.log(playbackState);
 					switch (playbackState) {
 						case "playing":
 							updatePlaybackState("pause");
