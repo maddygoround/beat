@@ -274,7 +274,7 @@ const Table = (props) => {
 				// Construct a row.
 				return (
 			
-						<Box flexDirection="column" key={key}>
+						<Box flexDirection="column" key={key} 	>
 							{/* {separator({ key: `separator-${key}`, columns, data: {} })} */}
 							{data({
 								key: `data-${key}`,

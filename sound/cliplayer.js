@@ -21,24 +21,28 @@ CliPlayer.prototype.paused = false;
 CliPlayer.prototype.running = false;
 
 CliPlayer.prototype.play = function () {
-	if (!this.autoplay) {
+	if (!this.autoplay && !this.running) {
 		setTimeout(() => {
 			// console.log(this.file);
 			const stream = fs.createReadStream(this.file);
 			const decoder = new lame.Decoder();
 			const that = this;
 			stream.pipe(decoder).on("format", function (format) {
-				speaker = new Speaker(format);
+				speaker = new Speaker({format});
 				this.pipe(speaker);
 				that.spkr = speaker;
 				that.spkr.on("error", () => {});
 				that.spkr.on("warn", () => {});
+			}).on("error",(err)=>{
+				console.log("error",err);
+			}).on("close",()=>{
+				console.log("close")
 			});
 			this.stream = stream;
 			this.decoder = decoder;
 			this.running = true;
 			this.emit("play");
-		}, 500);
+		}, 1000);
 	}
 };
 
@@ -81,7 +85,7 @@ CliPlayer.prototype.stop = function () {
 			that.decoder = null;
 			that.emit("stop");
 		}
-	}, 500);
+	}, 300);
 };
 
 module.exports = CliPlayer;

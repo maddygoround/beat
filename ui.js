@@ -46,21 +46,6 @@ const App = () => {
 			});
 
 			walker.on("end", function () {
-				const newfiles = files.map((file,index)=>{
-					return {...file, no : files.length + index }
-				}) 
-
-				files = [...files,...newfiles]
-					const newfiles2 = files.map((file, index) => {
-						return { ...file, no: files.length + index };
-					}); 
-
-					files = [...files, ...newfiles2];
-						const newfiles3 = files.map((file, index) => {
-							return { ...file, no: files.length + index };
-						}); 
-				
-				files = [...files, ...newfiles3];
 				resolve(files);
 			});
 		});

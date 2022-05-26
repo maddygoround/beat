@@ -23,10 +23,9 @@
 		"lodash": "^4.17.21",
 		"meow": "^9.0.0",
 		"music-metadata": "^7.12.3",
-		"node-lame": "^1.3.2",
 		"object-hash": "^3.0.0",
 		"react": "^18.1.0",
-		"speaker": "git+https://github.com/maddygoround/node-speaker.git",
+		"speaker": "^0.5.4",
 		"walk": "^2.3.15"
 	},
 	"devDependencies": {
