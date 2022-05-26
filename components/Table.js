@@ -69,11 +69,11 @@ const Table = (props) => {
 				}
 				break;
 			case "return":
-				if (selectedItem.no !== activeRef.current + 1 || !playbackState) {
+				if (selectedItem.no !== activeRef.current + 1  || !playbackState) {
 					item = props.data[activeRef.current];
 					updateSelectedItem(item);
-					updatePlaybackState("play");
 				} else {
+					console.log(playbackState);
 					switch (playbackState) {
 						case "playing":
 							updatePlaybackState("pause");

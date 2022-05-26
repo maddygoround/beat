@@ -20,14 +20,15 @@ const Info = ({
 	moveInterval,
 	file,
 }) => {
-	const playbackStates = ["playing", "paused","resumed","stopped"];
+	const playbackStates = ["playing", "paused", "resumed", "stopped"];
 	const [shiftIndex, setShiftIndex] = React.useState(0);
 	const [startIndexing, setStartIndexing] = React.useState(false);
 	const [titleString, setTitleString] = React.useState("");
 	const [titleWidth, setTitleWidth] = React.useState(0);
 	const [numberOfCharsPerSide, setNumberOfCharsPerSide] = React.useState(0);
 	const [paddingString, setPaddingString] = React.useState("");
-	const { selectedItem, playbackState , updatePlaybackState } = useClientContext();
+	const { selectedItem, playbackState, updatePlaybackState } =
+		useClientContext();
 	const audioRef = React.useRef(null);
 	// const [dividerWidth, setDividerWith] = React.useState(0);
 	// Helpers
@@ -46,8 +47,10 @@ const Info = ({
 
 	React.useEffect(() => {
 		if (playbackState && audioRef.current) {
-			const doNotPerformAction = playbackStates.find((state)=> state === playbackState);
- 			if (!doNotPerformAction) {
+			const doNotPerformAction = playbackStates.find(
+				(state) => state === playbackState
+			);
+			if (!doNotPerformAction) {
 				audioRef.current[playbackState]();
 			}
 		}
@@ -55,31 +58,35 @@ const Info = ({
 
 	React.useEffect(() => {
 		if (selectedItem) {
-			if (audioRef.current) {
-				audioRef.current.stop();
-				audioRef.current.off("play",()=>{});
-				audioRef.current.off("stop", () => {});
-				audioRef.current.off("pause", () => {});
-				audioRef.current.off("resume", () => {});
-			}
+			(async () => {
+				if (audioRef.current) {
+					await audioRef.current.stop();
+					audioRef.current.off("play", () => {});
+					audioRef.current.off("stop", () => {});
+					audioRef.current.off("pause", () => {});
+					audioRef.current.off("resume", () => {});
+					audioRef.current = new player(selectedItem.path);
+					audioRef.current.play();
+				} else {
+					audioRef.current = new player(selectedItem.path);
+					updatePlaybackState("stopped");
+				}
+				audioRef.current.on("play", () => {
+					updatePlaybackState("playing");
+				});
 
-			audioRef.current = new player(selectedItem.path);
+				audioRef.current.on("stop", () => {
+					updatePlaybackState("stopped");
+				});
 
-			audioRef.current.on("play", () => {
-				updatePlaybackState("playing");
-			});
+				audioRef.current.on("pause", () => {
+					updatePlaybackState("paused");
+				});
 
-			audioRef.current.on("stop", () => {
-				updatePlaybackState("stopped");
-			});
-
-			audioRef.current.on("pause", () => {
-				updatePlaybackState("paused");
-			});
-
-			audioRef.current.on("resume", () => {
-				updatePlaybackState("playing");
-			});
+				audioRef.current.on("resume", () => {
+					updatePlaybackState("playing");
+				});
+			})();
 
 			const dividerWidth = getSideDividerWidth(width, titleWidth);
 

@@ -72,20 +72,23 @@ CliPlayer.prototype.resume = function () {
 };
 
 CliPlayer.prototype.stop = function () {
-	this.manualStop = true;
-	this.running = false;
-	var that = this;
-	setTimeout(function () {
-		if (that.spkr) {
-			that.spkr.close();
-			that.decoder.unpipe();
-			that.stream.close();
-			that.stream = null;
-			that.spkr = null;
-			that.decoder = null;
-			that.emit("stop");
-		}
-	}, 300);
+	return new Promise((resolve, reject) => {
+		this.manualStop = true;
+		this.running = false;
+		var that = this;
+		setTimeout(function () {
+			if (that.spkr) {
+				that.spkr.close();
+				that.decoder.unpipe();
+				that.stream.close();
+				that.stream = null;
+				that.spkr = null;
+				that.decoder = null;
+				that.emit("stop");
+				resolve();
+			}
+		}, 300);
+	});
 };
 
 module.exports = CliPlayer;
