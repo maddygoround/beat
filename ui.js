@@ -89,16 +89,13 @@ const App = () => {
 				height={3}
 			>
 				<Gradient name="cristal">
-					<Text> enter (select / start) </Text>
+					<Text> enter (play / pause) </Text>
 				</Gradient>
 				<Spacer />
 				<Gradient name="cristal">
 					<Text> q (quit) </Text>
 				</Gradient>
 				<Spacer />
-				<Gradient name="cristal">
-					<Text> p (play / pause) </Text>
-				</Gradient>
 				<Spacer />
 				<Gradient name="cristal">
 					<Text> s (stop) </Text>

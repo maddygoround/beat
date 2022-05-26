@@ -55,19 +55,7 @@ const Table = (props) => {
 				updatePlaybackState("stop");
 				break;
 			case "q":
-				console.log("quit");
 				process.exit(1);
-				break;
-			case "p":
-				switch (playbackState) {
-					case "playing":
-						updatePlaybackState("pause");
-						break;
-					case "paused":
-						updatePlaybackState("resume");
-						break;
-				}
-				break;
 			case "return":
 				if (selectedItem.no !== activeRef.current + 1  || !playbackState) {
 					item = props.data[activeRef.current];

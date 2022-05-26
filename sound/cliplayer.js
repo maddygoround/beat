@@ -29,6 +29,7 @@ CliPlayer.prototype.play = function () {
 			const that = this;
 			stream.pipe(decoder).on("format", function (format) {
 				speaker = new Speaker({format});
+				that.format = format;
 				this.pipe(speaker);
 				that.spkr = speaker;
 				that.spkr.on("error", () => {});
@@ -61,7 +62,7 @@ CliPlayer.prototype.resume = function () {
 	if (this.paused && this.running) {
 		var that = this;
 		setTimeout(function () {
-			that.spkr = new Speaker();
+			that.spkr = new Speaker({format : that.format});
 			that.spkr.on("error", () => {});
 			that.spkr.on("warn", () => {});
 			that.decoder.pipe(that.spkr);
@@ -84,6 +85,7 @@ CliPlayer.prototype.stop = function () {
 				that.stream = null;
 				that.spkr = null;
 				that.decoder = null;
+				that.format = null;
 				that.emit("stop");
 				resolve();
 			}
