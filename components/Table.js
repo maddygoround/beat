@@ -3,6 +3,7 @@ const { Box, Text, useInput } = require("ink");
 const importJsx = require("import-jsx");
 const { sha1 } = require("object-hash");
 const { useClientContext } = importJsx("../context");
+const {debounce} = require('lodash');
 
 const Table = (props) => {
 	/* Config */
@@ -28,14 +29,39 @@ const Table = (props) => {
 		return copy;
 	});
 
+		var playbackHandlerDebounce = debounce(function () {
+			playbackHandler();
+		}, 200);
+
 	useInput((input, key) => {
 		let presedKey = Object.keys(key).find((k) => key[k]);
 		if (!presedKey) {
 			presedKey = input;
 		}
+	
 		handleKeyPress(presedKey);
+		
 	});
 
+	const playbackHandler = () => {
+		if (selectedItem.no !== activeRef.current + 1 || !playbackState) {
+			const item = props.data[activeRef.current];
+			updateSelectedItem(item);
+		} else {
+			switch (playbackState) {
+				case "playing":
+					updatePlaybackState("pause");
+					break;
+				case "paused":
+					updatePlaybackState("resume");
+					break;
+				case "stopped":
+					updatePlaybackState("play");
+					break;
+			}
+		}
+	};
+	
 	React.useEffect(() => {
 		if (props.data) {
 			updateSelectedItem(props.data[0]);
@@ -43,7 +69,6 @@ const Table = (props) => {
 	}, [props.data]);
 
 	const handleKeyPress = (ch, key) => {
-		let item;
 		switch (ch) {
 			case "upArrow":
 				moveToPreviosItem();
@@ -57,22 +82,7 @@ const Table = (props) => {
 			case "q":
 				process.exit(1);
 			case "return":
-				if (selectedItem.no !== activeRef.current + 1  || !playbackState) {
-					item = props.data[activeRef.current];
-					updateSelectedItem(item);
-				} else {
-					switch (playbackState) {
-						case "playing":
-							updatePlaybackState("pause");
-							break;
-						case "paused":
-							updatePlaybackState("resume");
-							break;
-						case "stopped":
-							updatePlaybackState("play");
-							break;
-					}	
-				}
+				playbackHandlerDebounce();
 				break;
 		}
 	};
