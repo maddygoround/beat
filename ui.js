@@ -96,6 +96,13 @@ const App = () => {
 					<Text> q (quit) </Text>
 				</Gradient>
 				<Spacer />
+				<Gradient name="cristal">
+					<Text> + (+volume) </Text>
+				</Gradient>
+				<Spacer />
+				<Gradient name="cristal">
+					<Text> - (-volume) </Text>
+				</Gradient>
 				<Spacer />
 				<Gradient name="cristal">
 					<Text> s (stop) </Text>
@@ -104,7 +111,6 @@ const App = () => {
 				<Gradient name="cristal">
 					<Text> up / down (move) </Text>
 				</Gradient>
-				<Spacer />
 			</Box>
 		</ClientProvider>
 	);

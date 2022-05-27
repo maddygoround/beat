@@ -24,6 +24,7 @@
 		"meow": "^9.0.0",
 		"music-metadata": "^7.12.3",
 		"object-hash": "^3.0.0",
+		"pcm-volume": "^1.0.0",
 		"react": "^18.1.0",
 		"speaker": "git+https://github.com/maddygoround/node-speaker.git",
 		"walk": "^2.3.15"

@@ -2,12 +2,14 @@ const fs = require("fs");
 const lame = require("@suldashi/lame");
 const EventEmitter = require("events").EventEmitter;
 const Speaker = require("./instance");
-
+const volume = require("pcm-volume");
 class CliPlayer extends EventEmitter {
 	constructor(file, opts) {
 		super();
 		this.opts = opts || { autoplay: false };
 		this.file = file;
+		this.v = new volume();
+		this.decoder = new lame.Decoder();
 		if (this.opts.autoplay) {
 			this.play();
 		}
@@ -17,20 +19,27 @@ class CliPlayer extends EventEmitter {
 CliPlayer.prototype.paused = false;
 CliPlayer.prototype.running = false;
 
+CliPlayer.prototype.setVolume = function (value) {
+	this.v.setVolume(value);
+};
+
+CliPlayer.prototype.getVolume = function(){
+	return this.v.volume;
+}
+
 CliPlayer.prototype.play = function () {
 	if (!this.autoplay && !this.running) {
 		setTimeout(() => {
 			const stream = fs.createReadStream(this.file);
-			const decoder = new lame.Decoder();
 			const that = this;
-			stream.pipe(decoder).on("format", function (format) {
+			stream.pipe(this.decoder).on("format", function (format) {
 				const speaker = Speaker(format);
-				this.pipe(speaker);
+				that.v.pipe(speaker);
+				this.pipe(that.v);
 				that.spkr = speaker;
 				that.format = format;
 			});
 			this.stream = stream;
-			this.decoder = decoder;
 			this.running = true;
 			this.emit("play");
 		}, 400);
@@ -55,7 +64,7 @@ CliPlayer.prototype.resume = function () {
 		setTimeout(
 			function () {
 				this.spkr = Speaker(this.format);
-				this.decoder.pipe(this.spkr);
+				this.v.pipe(this.spkr);
 				this.paused = false;
 				this.emit("resume");
 			}.bind(this),
@@ -71,6 +80,7 @@ CliPlayer.prototype.stop = function () {
 			function () {
 				if (this.spkr) {
 					this.spkr.end();
+					this.v.unpipe()
 					this.decoder.unpipe();
 					this.stream.close();
 					this.emit("stop");

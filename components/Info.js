@@ -67,6 +67,9 @@ const Info = ({
 					audioRef.current.off("resume", () => {});
 					audioRef.current = new player(selectedItem.path);
 					audioRef.current.play();
+					setTimeout(()=>{
+						audioRef.current.setVolume(0.3);
+					},6000)
 				} else {
 					audioRef.current = new player(selectedItem.path);
 					updatePlaybackState("stopped");
