@@ -27,7 +27,7 @@ const Info = ({
 	const [titleWidth, setTitleWidth] = React.useState(0);
 	const [numberOfCharsPerSide, setNumberOfCharsPerSide] = React.useState(0);
 	const [paddingString, setPaddingString] = React.useState("");
-	const { selectedItem, playbackState, updatePlaybackState } =
+	const { selectedItem, playbackState, updatePlaybackState , playbackVolumeState } =
 		useClientContext();
 	const audioRef = React.useRef(null);
 	// const [dividerWidth, setDividerWith] = React.useState(0);
@@ -57,6 +57,12 @@ const Info = ({
 	}, [playbackState, audioRef.current]);
 
 	React.useEffect(() => {
+		if (playbackVolumeState <= 1 && playbackVolumeState >= 0 &&  audioRef.current) {
+			audioRef.current.setVolume(playbackVolumeState);
+		}
+	}, [playbackVolumeState, audioRef.current]);
+
+	React.useEffect(() => {
 		if (selectedItem) {
 			(async () => {
 				if (audioRef.current) {
@@ -67,9 +73,6 @@ const Info = ({
 					audioRef.current.off("resume", () => {});
 					audioRef.current = new player(selectedItem.path);
 					audioRef.current.play();
-					setTimeout(()=>{
-						audioRef.current.setVolume(0.3);
-					},6000)
 				} else {
 					audioRef.current = new player(selectedItem.path);
 					updatePlaybackState("stopped");

@@ -3,7 +3,7 @@ const { Box, Text, useInput } = require("ink");
 const importJsx = require("import-jsx");
 const { sha1 } = require("object-hash");
 const { useClientContext } = importJsx("../context");
-const {debounce} = require('lodash');
+const { debounce } = require("lodash");
 
 const Table = (props) => {
 	/* Config */
@@ -14,8 +14,10 @@ const Table = (props) => {
 	const {
 		playbackState,
 		selectedItem,
+		playbackVolumeState,
 		updatePlaybackState,
 		updateSelectedItem,
+		updatePlaybackVolumeState,
 	} = useClientContext();
 	const [active, setActive] = React.useState(1);
 	const activeRef = React.useRef(0);
@@ -29,18 +31,17 @@ const Table = (props) => {
 		return copy;
 	});
 
-		var playbackHandlerDebounce = debounce(function () {
-			playbackHandler();
-		}, 200);
+	var playbackHandlerDebounce = debounce(function () {
+		playbackHandler();
+	}, 200);
 
 	useInput((input, key) => {
 		let presedKey = Object.keys(key).find((k) => key[k]);
 		if (!presedKey) {
 			presedKey = input;
 		}
-	
+
 		handleKeyPress(presedKey);
-		
 	});
 
 	const playbackHandler = () => {
@@ -61,7 +62,7 @@ const Table = (props) => {
 			}
 		}
 	};
-	
+
 	React.useEffect(() => {
 		if (props.data) {
 			updateSelectedItem(props.data[0]);
@@ -69,6 +70,7 @@ const Table = (props) => {
 	}, [props.data]);
 
 	const handleKeyPress = (ch, key) => {
+		let currentVal = 0;
 		switch (ch) {
 			case "upArrow":
 				moveToPreviosItem();
@@ -81,6 +83,14 @@ const Table = (props) => {
 				break;
 			case "q":
 				process.exit(1);
+			case "+":
+				currentVal = playbackVolumeState;
+				updatePlaybackVolumeState(currentVal + 0.1);
+				break;
+			case "_":
+				currentVal = playbackVolumeState;
+				updatePlaybackVolumeState(currentVal - 0.1);
+				break;
 			case "return":
 				playbackHandlerDebounce();
 				break;
@@ -270,18 +280,16 @@ const Table = (props) => {
 				const isPlaying = selectedItem?.no === row.no;
 				// Construct a row.
 				return (
-			
-						<Box flexDirection="column" key={key} 	>
-							{/* {separator({ key: `separator-${key}`, columns, data: {} })} */}
-							{data({
-								key: `data-${key}`,
-								columns,
-								data: row,
-								isActive,
-								isPlaying,
-							})}
-						</Box>
-					
+					<Box flexDirection="column" key={key}>
+						{/* {separator({ key: `separator-${key}`, columns, data: {} })} */}
+						{data({
+							key: `data-${key}`,
+							columns,
+							data: row,
+							isActive,
+							isPlaying,
+						})}
+					</Box>
 				);
 			})}
 			{/* Footer */}
