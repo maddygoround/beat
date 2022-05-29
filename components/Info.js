@@ -4,6 +4,7 @@ const importJsx = require("import-jsx");
 const Gradient = require("ink-gradient");
 const stringWidth = require("string-width");
 const BigText = require("ink-big-text");
+const Bar = importJsx("./Bar");
 const { useClientContext } = importJsx("../context");
 const player = require("../sound/cliplayer");
 const PAD = " ";
@@ -236,16 +237,21 @@ const Info = ({
 					height={3}
 					// marginLeft={2}
 					width="95%"
-					justifyContent="center"
+					// justifyContent="center"
 					borderColor="#004e92"
 				>
-					<Text>00:00:00</Text>
+					<Gradient name="morning">
+					<Text>Volume : </Text>
+						<Bar percent={1} columns={60} text="Volume" />
+					</Gradient>
+					{/* <Bar color="red" /> */}
+					{/* <Text>00:00:00</Text>
 					<Text>{paddingString}</Text>
 					<Text color={dividerColor}>{dividerSideStringLeft}</Text>
 					<Text color={titleColor}>{titleString}</Text>
 					<Text color={dividerColor}>{dividerSideStringRight}</Text>
 					<Text>{paddingString}</Text>
-					<Text>{dateFormatter(selectedItem.duration)}</Text>
+					<Text>{dateFormatter(selectedItem.duration)}</Text> */}
 				</Box>
 			</Box>
 		);

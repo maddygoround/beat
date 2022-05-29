@@ -3,9 +3,11 @@ const lame = require("@suldashi/lame");
 const EventEmitter = require("events").EventEmitter;
 const Speaker = require("./instance");
 const volume = require("pcm-volume");
+const {TaskTimer} = require("tasktimer");
 class CliPlayer extends EventEmitter {
 	constructor(file, opts) {
 		super();
+		this.timer = new TaskTimer(1000);
 		this.opts = opts || { autoplay: false };
 		this.file = file;
 		this.v = new volume();
@@ -23,6 +25,7 @@ CliPlayer.prototype.setVolume = function (value) {
 	this.v.setVolume(value);
 };
 
+
 CliPlayer.prototype.getVolume = function(){
 	return this.v.volume;
 }
@@ -32,10 +35,11 @@ CliPlayer.prototype.play = function () {
 		setTimeout(() => {
 			const stream = fs.createReadStream(this.file);
 			const that = this;
-			stream.pipe(this.decoder).on("format", function (format) {
+			stream.pipe(this.decoder).on("format", function (format) {	
 				const speaker = Speaker(format);
 				that.v.pipe(speaker);
 				this.pipe(that.v);
+				this.timer.start();
 				that.spkr = speaker;
 				that.format = format;
 			});
@@ -46,11 +50,18 @@ CliPlayer.prototype.play = function () {
 	}
 };
 
+
+CliPlayer.prototype.currentTime = function (time) {
+	return this.timer.time.elapsed;
+}
+
+
 CliPlayer.prototype.pause = function () {
 	if (!this.paused && this.running) {
 		setTimeout(
 			function () {
 				this.spkr.end();
+				this.timer.pause();
 				this.paused = true;
 				this.emit("pause");
 			}.bind(this),
@@ -65,6 +76,7 @@ CliPlayer.prototype.resume = function () {
 			function () {
 				this.spkr = Speaker(this.format);
 				this.v.pipe(this.spkr);
+				this.timer.resume();
 				this.paused = false;
 				this.emit("resume");
 			}.bind(this),
@@ -72,6 +84,7 @@ CliPlayer.prototype.resume = function () {
 		);
 	}
 };
+
 
 CliPlayer.prototype.stop = function () {
 	return new Promise((resolve, reject) => {
@@ -83,6 +96,7 @@ CliPlayer.prototype.stop = function () {
 					this.v.unpipe()
 					this.decoder.unpipe();
 					this.stream.close();
+					this.timer.remove();
 					this.emit("stop");
 					resolve();
 				} else {
@@ -95,4 +109,7 @@ CliPlayer.prototype.stop = function () {
 	});
 };
 
+
 module.exports = CliPlayer;
+
+

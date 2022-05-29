@@ -15,6 +15,7 @@
 	],
 	"dependencies": {
 		"@suldashi/lame": "^1.2.5",
+		"blacklist": "^1.1.4",
 		"constate": "^3.3.2",
 		"import-jsx": "^4.0.1",
 		"ink": "^3.2.0",
@@ -27,6 +28,7 @@
 		"pcm-volume": "^1.0.0",
 		"react": "^18.1.0",
 		"speaker": "git+https://github.com/maddygoround/node-speaker.git",
+		"tasktimer": "^3.0.0",
 		"walk": "^2.3.15"
 	},
 	"devDependencies": {
