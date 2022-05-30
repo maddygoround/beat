@@ -7,7 +7,11 @@ const {TaskTimer} = require("tasktimer");
 class CliPlayer extends EventEmitter {
 	constructor(file, opts) {
 		super();
+		console.log("restart");
 		this.timer = new TaskTimer(1000);
+		this.timer.on("tick",() => {
+			this.emit("time",this.timer.tickCount)
+		});
 		this.opts = opts || { autoplay: false };
 		this.file = file;
 		this.v = new volume();
@@ -35,12 +39,16 @@ CliPlayer.prototype.play = function () {
 		setTimeout(() => {
 			const stream = fs.createReadStream(this.file);
 			const that = this;
+			that.timer.start();
 			stream.pipe(this.decoder).on("format", function (format) {	
 				const speaker = Speaker(format);
 				that.v.pipe(speaker);
 				this.pipe(that.v);
-				this.timer.start();
 				that.spkr = speaker;
+				that.spkr.on("close",() => {
+					console.log("close");
+					that.timer.stop();
+				});
 				that.format = format;
 			});
 			this.stream = stream;
@@ -51,7 +59,7 @@ CliPlayer.prototype.play = function () {
 };
 
 
-CliPlayer.prototype.currentTime = function (time) {
+CliPlayer.prototype.getCurrentTime = function (time) {
 	return this.timer.time.elapsed;
 }
 
@@ -96,10 +104,11 @@ CliPlayer.prototype.stop = function () {
 					this.v.unpipe()
 					this.decoder.unpipe();
 					this.stream.close();
-					this.timer.remove();
+					this.timer.stop();
 					this.emit("stop");
 					resolve();
 				} else {
+					this.timer.stop();
 					this.emit("stop");
 					resolve();
 				}

@@ -27,7 +27,9 @@ const Info = ({
 	const [titleString, setTitleString] = React.useState("");
 	const [titleWidth, setTitleWidth] = React.useState(0);
 	const [numberOfCharsPerSide, setNumberOfCharsPerSide] = React.useState(0);
+	const [currentPlaybackTime,setCurrentPlaybackTime] = React.useState(0)
 	const [paddingString, setPaddingString] = React.useState("");
+	const [timeOutValue, setTimeoutValue] = React.useState(null);
 	const { selectedItem, playbackState, updatePlaybackState , playbackVolumeState } =
 		useClientContext();
 	const audioRef = React.useRef(null);
@@ -90,15 +92,19 @@ const Info = ({
 					updatePlaybackState("paused");
 				});
 
+				audioRef.current.on("time",(time)=> {
+					setCurrentPlaybackTime(time);
+				});
+
 				audioRef.current.on("resume", () => {
 					updatePlaybackState("playing");
 				});
 			})();
 
 			const dividerWidth = getSideDividerWidth(width, titleWidth);
-
+			
 			setStartIndexing(true);
-			setShiftIndex(dividerWidth);
+			setShiftIndex(25);
 
 			setTitleString(
 				title
@@ -114,12 +120,18 @@ const Info = ({
 	}, [selectedItem]);
 
 	React.useEffect(() => {
-		if (startIndexing && shiftIndex > -25 && moveInterval) {
-			setTimeout(() => {
+		// console.log(playbackState);
+
+		console.log(shiftIndex);
+		if (startIndexing && shiftIndex > -25 && playbackState === "playing") {
+			console.log(Math.floor(selectedItem.duration));
+			clearTimeout(timeOutValue);
+			let timerVal = setTimeout(() => {
 				setShiftIndex(shiftIndex - 1);
-			}, (file.duration / 50) * 1000);
+			}, (Math.floor(selectedItem.duration) / 50) * 800);
+			setTimeoutValue(timerVal);
 		}
-	}, [shiftIndex]);
+	}, [shiftIndex, selectedItem, playbackState]);
 
 	const dividerSideStringLeft = dividerChar.repeat(
 		numberOfCharsPerSide - shiftIndex
@@ -219,14 +231,14 @@ const Info = ({
 					justifyContent="center"
 					borderColor="#004e92"
 				>
-					<Text>00:00:00</Text>
+					<Text>{dateFormatter(currentPlaybackTime)} </Text>
 					<Text>{paddingString}</Text>
-					<Gradient name="rainbow">
+					{/* <Gradient name="vice"> */}
 						<Text color={dividerColor}>{dividerSideStringLeft}</Text>
-						<Text color={titleColor}>{titleString}</Text>
+						<Text color={titleColor} >{titleString}</Text>
 						<Text color={dividerColor}>{dividerSideStringRight}</Text>
 						<Text>{paddingString}</Text>
-					</Gradient>
+					{/* </Gradient> */}
 					<Text>{dateFormatter(selectedItem.duration)}</Text>
 				</Box>
 				<Box
@@ -241,7 +253,7 @@ const Info = ({
 					borderColor="#004e92"
 				>
 					<Gradient name="morning">
-					<Text>Volume : </Text>
+						<Text>Volume : </Text>
 						<Bar percent={1} columns={60} text="Volume" />
 					</Gradient>
 					{/* <Bar color="red" /> */}
