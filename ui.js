@@ -69,8 +69,8 @@ const App = () => {
 			<Sections>
 				<Section name="info" width="39%">
 					<Info
-						dividerColor="purple"
-						titleColor="green"
+						dividerColor="#f6cd61"
+						titleColor="#ff6f69"
 						title="&#9673;"
 						padding={1}
 						width={50}
