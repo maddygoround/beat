@@ -29,9 +29,7 @@ const Bar = (props) => {
 
 	const newprops = blacklist(props, BLACKLIST_PROPS);
 	return (
-
-			<Text {...newprops}>{getString()}</Text>
-
+		<Text {...newprops}>{getString()}</Text>
 	);
 };
 

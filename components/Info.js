@@ -8,7 +8,7 @@ const Bar = importJsx("./Bar");
 const { useClientContext } = importJsx("../context");
 const player = require("../sound/cliplayer");
 const PAD = " ";
-
+const VolumeCol = 60;
 // Info
 const Info = ({
 	title,
@@ -120,11 +120,7 @@ const Info = ({
 	}, [selectedItem]);
 
 	React.useEffect(() => {
-		// console.log(playbackState);
-
-		console.log(shiftIndex);
 		if (startIndexing && shiftIndex > -25 && playbackState === "playing") {
-			console.log(Math.floor(selectedItem.duration));
 			clearTimeout(timeOutValue);
 			let timerVal = setTimeout(() => {
 				setShiftIndex(shiftIndex - 1);
@@ -234,10 +230,10 @@ const Info = ({
 					<Text>{dateFormatter(currentPlaybackTime)} </Text>
 					<Text>{paddingString}</Text>
 					{/* <Gradient name="vice"> */}
-						<Text color={dividerColor}>{dividerSideStringLeft}</Text>
-						<Text color={titleColor} >{titleString}</Text>
-						<Text color={dividerColor}>{dividerSideStringRight}</Text>
-						<Text>{paddingString}</Text>
+					<Text color={dividerColor}>{dividerSideStringLeft}</Text>
+					<Text color={titleColor}>{titleString}</Text>
+					<Text color={dividerColor}>{dividerSideStringRight}</Text>
+					<Text>{paddingString}</Text>
 					{/* </Gradient> */}
 					<Text>{dateFormatter(selectedItem.duration)}</Text>
 				</Box>
@@ -247,23 +243,17 @@ const Info = ({
 					borderStyle="single"
 					alignSelf="center"
 					height={3}
-					// marginLeft={2}
 					width="95%"
-					// justifyContent="center"
 					borderColor="#004e92"
 				>
 					<Gradient name="morning">
 						<Text>Volume : </Text>
-						<Bar percent={1} columns={60} text="Volume" />
+						<Bar
+							columns={VolumeCol}
+							left={VolumeCol - (VolumeCol * playbackVolumeState)}
+							text="Volume"
+						/>
 					</Gradient>
-					{/* <Bar color="red" /> */}
-					{/* <Text>00:00:00</Text>
-					<Text>{paddingString}</Text>
-					<Text color={dividerColor}>{dividerSideStringLeft}</Text>
-					<Text color={titleColor}>{titleString}</Text>
-					<Text color={dividerColor}>{dividerSideStringRight}</Text>
-					<Text>{paddingString}</Text>
-					<Text>{dateFormatter(selectedItem.duration)}</Text> */}
 				</Box>
 			</Box>
 		);

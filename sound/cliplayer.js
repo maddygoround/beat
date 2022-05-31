@@ -7,7 +7,6 @@ const {TaskTimer} = require("tasktimer");
 class CliPlayer extends EventEmitter {
 	constructor(file, opts) {
 		super();
-		console.log("restart");
 		this.timer = new TaskTimer(1000);
 		this.timer.on("tick",() => {
 			this.emit("time",this.timer.tickCount)
@@ -46,7 +45,6 @@ CliPlayer.prototype.play = function () {
 				this.pipe(that.v);
 				that.spkr = speaker;
 				that.spkr.on("close",() => {
-					console.log("close");
 					that.timer.stop();
 				});
 				that.format = format;
