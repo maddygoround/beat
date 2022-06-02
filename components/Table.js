@@ -265,7 +265,7 @@ const Table = (props) => {
 	 * Render the table line by line.
 	 */
 	return (
-		<Box flexDirection="column" marginTop={1}>
+		<Box flexDirection="column" marginTop={1} height={10}>
 			{/* Header */}
 
 			{/* { header({ key: 'header', columns, data: {} })},  */}
@@ -312,7 +312,7 @@ const row = (config) => {
 	/* Row */
 
 	return (props) => (
-		<Box flexDirection="row">
+		<Box flexDirection="row" >
 			{/* Left */}
 			<skeleton.component>{skeleton.left}</skeleton.component>
 			{/* Data */}
@@ -359,6 +359,7 @@ const row = (config) => {
 
 						return (
 							/* prettier-ignore */
+
 							<config.cell  key={key} isActive={props.isActive} isPlaying={props.isPlaying} >
                                 {`${skeleton.line.repeat(ml)}${String(value)}${skeleton.line.repeat(mr)}`}
                             </config.cell>
